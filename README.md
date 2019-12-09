@@ -1,28 +1,15 @@
 
-# Comparing Machine Learning Techniques Using Pipelines - Lab
+# Integrating PCA in Pipelines - Lab
 
 ## Introduction
 
-In this lab, you'lll use a Dataset created by Otto group, which was also used in a [Kaggle competition](https://www.kaggle.com/c/otto-group-product-classification-challenge/data).
-
-The description of the data set is as follows:
-
-The Otto Group is one of the world’s biggest e-commerce companies, with subsidiaries in more than 20 countries, including Crate & Barrel (USA), Otto.de (Germany) and 3 Suisses (France). They are selling millions of products worldwide every day, with several thousand products being added to our product line.
-
-A consistent analysis of the performance of our products is crucial. However, due to their global infrastructure, many identical products get classified differently. Therefore, the quality of our product analysis depends heavily on the ability to accurately cluster similar products. The better the classification, the more insights Otto Group can generate about their product range.
-
-In this lab, you'll use a data set containing:
-- A column `id`, which is an anonymous id unique to a product
-- 93 columns `feat_1`, `feat_2`, ..., `feat_93`, which are the various features of a product
-- a column `target` - the class of a product
-
+In a previous section, you learned about how to use pipelines in scikit-learn to combine several supervised learning algorithms in a manageable pipeline. In this lesson, you will integrate PCA along with classifiers in the pipeline. 
 
 ## Objectives
 
-You will be able to:
-- Compare different classification techniques
-- Construct pipelines in scikit-learn
-- Use pipelines in combination with GridSearchCV
+In this lab you will: 
+
+- Integrate PCA in scikit-learn pipelines 
 
 ## The Data Science Workflow
 
@@ -30,19 +17,30 @@ You will be following the data science workflow:
 
 1. Initial data inspection, exploratory data analysis, and cleaning
 2. Feature engineering and selection
-3. create a baseline model
-4. create a machine learning pipeline and compare results with the baseline model
+3. Create a baseline model
+4. Create a machine learning pipeline and compare results with the baseline model
 5. Interpret the model and draw conclusions
 
 ##  Initial data inspection, exploratory data analysis, and cleaning
 
-The data is stored in "otto_group.csv".
+You'll use a dataset created by Otto group, which was also used in a [Kaggle competition](https://www.kaggle.com/c/otto-group-product-classification-challenge/data). The description of the dataset is as follows:
 
-Things to do here:
-- Check for NAs
-- Check the distributions
-- Check how many inputs there are
-- ...
+The Otto Group is one of the world’s biggest e-commerce companies, with subsidiaries in more than 20 countries, including Crate & Barrel (USA), Otto.de (Germany) and 3 Suisses (France). They are selling millions of products worldwide every day, with several thousand products being added to our product line.
+
+A consistent analysis of the performance of our products is crucial. However, due to their global infrastructure, many identical products get classified differently. Therefore, the quality of our product analysis depends heavily on the ability to accurately cluster similar products. The better the classification, the more insights Otto Group can generate about their product range.
+
+In this lab, you'll use a dataset containing:
+- A column `id`, which is an anonymous id unique to a product
+- 93 columns `feat_1`, `feat_2`, ..., `feat_93`, which are the various features of a product
+- a column `target` - the class of a product
+
+
+
+The dataset is stored in the `'otto_group.csv'` file. Import this file into a DataFrame called `data`, and then: 
+
+- Check for missing values 
+- Check the distribution of columns 
+- ... and any other things that come to your mind to explore the data 
 
 
 ```python
@@ -477,7 +475,7 @@ feat.boxplot(figsize=(10,10));
 ![png](index_files/index_22_0.png)
 
 
-Because the data is zero-inflated the boxplots look as shown above. Because there are this many zeroes, most values above zero will seem to be outliers. The safe decision for this data is to not delete any outliers and see what happens. With many 0s, sparse data is available and high values may be super informative. More-over, without having any intuitive meaning for each of the features, we don't know if a value of ~260 is actually an outlier.
+Because there are so many zeroes, most values above zero will seem to be outliers. The safe decision for this data is to not delete any outliers and see what happens. With many 0s, sparse data is available and high values may be super informative. Moreover, without having any intuitive meaning for each of the features, we don't know if a value of ~260 is actually an outlier.
 
 
 ```python
@@ -487,7 +485,7 @@ Because the data is zero-inflated the boxplots look as shown above. Because ther
 
 ```python
 # __SOLUTION__ 
-# is there any missing data?
+# Is there any missing data?
 
 feat.isna().any().any()
 ```
@@ -501,7 +499,7 @@ feat.isna().any().any()
 
 ## Feature engineering and selection with PCA
 
-Have a look at the correlation structure of your features using a heatmap.
+Have a look at the correlation structure of your features using a [heatmap](https://seaborn.pydata.org/generated/seaborn.heatmap.html).
 
 
 ```python
@@ -521,7 +519,7 @@ sns.heatmap(feat.corr(), center=0);
 ![png](index_files/index_29_0.png)
 
 
-Use PCA to downscale your features. Use PCA to select a number of features in a way that you still keep 80% of your explained variance.
+Use PCA to select a number of features in a way that you still keep 80% of your explained variance.
 
 
 ```python
@@ -571,11 +569,9 @@ sns.heatmap(pd.DataFrame(principalComponents).corr(), center=0);
 ![png](index_files/index_34_0.png)
 
 
-## Create a train test split with a test size of 40%
+## Create a train-test split with a test size of 40%
 
-This is a relatively big training set. Feel free to make it smaller (down to ~20%), but for an initial run you can try smaller training sets so the computation time is more manageable.
-
-For now, simply use the original data and not the principal components. We looked at the PC's first to get a sense of our correlation structure, and to see how we can downsize our data without losing too much information. In what's next, you'll make PCA part of the pipeline!!
+This is a relatively big training set, so you can assign 40% to the test set. Set the `random_state` to 42. 
 
 
 ```python
@@ -605,11 +601,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_
 
 ## Create a baseline model
 
-Create your baseline model *in a pipeline setting*. In the pipeline
-- Your first step will be to scale your features down to the number of features that ensure you keep just 80% of your explained variance (which we saw before)
-- Your second step will be the building a basic logistic regression model.
+Create your baseline model *in a pipeline setting*. In the pipeline: 
 
-Make sure to fit the model using the training set, and test the result by obtaining the accuracy using the test set.
+- Your first step will be to scale your features down to the number of features that ensure you keep just 80% of your explained variance (which we saw before)
+- Your second step will be the building a basic logistic regression model 
+
+Make sure to fit the model using the training set, and test the result by obtaining the accuracy using the test set. Set the `random_state` to 123. 
 
 
 ```python
@@ -637,8 +634,8 @@ from sklearn.pipeline import Pipeline
 ```python
 # __SOLUTION__ 
 # Construct some pipelines
-pipe_lr = Pipeline([('pca', PCA(n_components=27, random_state=123)),
-         ('clf', LogisticRegression(random_state=123))])
+pipe_lr = Pipeline([('pca', PCA(n_components=27, random_state=123)), 
+                    ('clf', LogisticRegression(random_state=123))])
 
 # Fit the pipelines
 pipe_lr.fit(X_train, y_train)
@@ -662,12 +659,12 @@ np.sum(pipe_lr.predict(X_test) == y_test)/len(y_test)
 
 
 
-## Create a pipeline consisting of a linear SVM, a simple Decision Tree and a simple Random Forest Classifier
+## Create a pipeline consisting of a linear SVM, a simple decision tree, and a simple random forest classifier
 
 Repeat the above, but now create three different pipelines:
 - One for a standard linear SCM
 - One for a default decision tree
-- One for a RandomForestClassifier
+- One for a random forest classifier
 
 
 ```python
@@ -686,16 +683,16 @@ from sklearn import tree
 
 ## KEEP IT FOR NOW
 # Construct some pipelines
-pipe_svm = Pipeline([('pca', PCA(n_components=27)),
-        ('clf', svm.SVC(random_state=123))])
+pipe_svm = Pipeline([('pca', PCA(n_components=27)), 
+                     ('clf', svm.SVC(random_state=123))])
         
-pipe_tree = Pipeline([('pca', PCA(n_components=27)),
-        ('clf', tree.DecisionTreeClassifier(random_state=123))])
+pipe_tree = Pipeline([('pca', PCA(n_components=27)), 
+                      ('clf', tree.DecisionTreeClassifier(random_state=123))])
 
-pipe_rf = Pipeline([('pca', PCA(n_components=27)),
-        ('clf', RandomForestClassifier(random_state=123))])
+pipe_rf = Pipeline([('pca', PCA(n_components=27)), 
+                    ('clf', RandomForestClassifier(random_state=123))])
 
-# List of pipelines, List of pipeline names
+# List of pipelines and pipeline names
 pipelines = [pipe_svm, pipe_tree, pipe_rf]
 pipeline_names = ['Support Vector Machine','Decision Tree','Random Forest']
 
@@ -740,9 +737,6 @@ Construct two pipelines with grid search:
 - one for random forests - try to have around 40 different models
 - one for the adaboost algorithm 
 
-As extra, level-up work, construct a pipeline with grid search for support vector machines. 
-* Make sure your grid isn't too big. You'll see it takes quite a while to fit SVMs with non-linear kernel functions!
-
 ### Random Forest pipeline with grid search
 
 
@@ -772,8 +766,8 @@ from sklearn.pipeline import Pipeline
 # __SOLUTION__ 
 # ⏰ This cell may take a long time to run!
 # Construct pipeline
-pipe_rf = Pipeline([('pca', PCA(n_components=27)),
-            ('clf', RandomForestClassifier(random_state = 123))])
+pipe_rf = Pipeline([('pca', PCA(n_components=27)), 
+                    ('clf', RandomForestClassifier(random_state = 123))])
 
 # Set grid search params
 param_grid_forest = [ 
@@ -786,10 +780,10 @@ param_grid_forest = [
 ]
 
 # Construct grid search
-gs_rf = GridSearchCV(estimator=pipe_rf,
-            param_grid=param_grid_forest,
-            scoring='accuracy',
-            cv=3, verbose=2, return_train_score = True)
+gs_rf = GridSearchCV(estimator=pipe_rf, 
+                     param_grid=param_grid_forest, 
+                     scoring='accuracy', 
+                     cv=3, verbose=2, return_train_score = True)
 
 # Fit using grid search
 gs_rf.fit(X_train, y_train)
@@ -1681,8 +1675,8 @@ gs_rf.cv_results_
 # ⏰ This cell may take several minutes to run
 from sklearn.ensemble import AdaBoostClassifier
 # Construct pipeline
-pipe_ab = Pipeline([('pca', PCA(n_components=27)),
-            ('clf', AdaBoostClassifier(random_state = 123))])
+pipe_ab = Pipeline([('pca', PCA(n_components=27)), 
+                    ('clf', AdaBoostClassifier(random_state = 123))])
 
 # Set grid search params
 adaboost_param_grid = {
@@ -1777,7 +1771,7 @@ print('\nBest params:\n', gs_ab.best_params_)
      {'clf__learning_rate': 0.5, 'clf__n_estimators': 70}
 
 
-Use your grid search object along with `.cv_results` to get the full result overview
+Use your grid search object along with `.cv_results` to get the full result overview: 
 
 
 ```python
@@ -1790,7 +1784,10 @@ Use your grid search object along with `.cv_results` to get the full result over
 gs_ab.cv_results_
 ```
 
-### Level-up: SVM pipeline with grid search
+### Level-up (Optional): SVM pipeline with grid search 
+
+As extra, level-up work, construct a pipeline with grid search for support vector machines. 
+* Make sure your grid isn't too big. You'll see it takes quite a while to fit SVMs with non-linear kernel functions!
 
 
 ```python
@@ -1803,20 +1800,20 @@ gs_ab.cv_results_
 # __SOLUTION__ 
 # ⏰ This cell may take a very long time to run!
 # Construct pipeline
-pipe_svm = Pipeline([('pca', PCA(n_components=27)),
-            ('clf', svm.SVC(random_state=123))])
+pipe_svm = Pipeline([('pca', PCA(n_components=27)), 
+                     ('clf', svm.SVC(random_state=123))])
 
 # Set grid search params
 param_grid_svm = [
-  {'clf__C': [0.1, 1, 10]  , 'clf__kernel': ['linear']},
+  {'clf__C': [0.1, 1, 10] , 'clf__kernel': ['linear']},
   {'clf__C': [1, 10], 'clf__gamma': [0.001, 0.01], 'clf__kernel': ['rbf']},
  ]
 
 # Construct grid search
-gs_svm = GridSearchCV(estimator=pipe_svm,
-            param_grid=param_grid_svm,
-            scoring='accuracy',
-            cv=3, verbose=2, return_train_score = True)
+gs_svm = GridSearchCV(estimator=pipe_svm, 
+                      param_grid=param_grid_svm, 
+                      scoring='accuracy', 
+                      cv=3, verbose=2, return_train_score = True)
 
 # Fit using grid search
 gs_svm.fit(X_train, y_train)
@@ -1828,7 +1825,7 @@ print('Best accuracy: %.3f' % gs_svm.best_score_)
 print('\nBest params:\n', gs_svm.best_params_)
 ```
 
-Use your grid search object along with `.cv_results` to get the full result overview
+Use your grid search object along with `.cv_results` to get the full result overview: 
 
 
 ```python
