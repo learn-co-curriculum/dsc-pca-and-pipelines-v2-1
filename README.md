@@ -1,4 +1,3 @@
-
 # Integrating PCA in Pipelines - Lab
 
 ## Introduction
@@ -23,11 +22,11 @@ You will be following the data science workflow:
 
 ##  Initial data inspection, exploratory data analysis, and cleaning
 
-You'll use a dataset created by Otto group, which was also used in a [Kaggle competition](https://www.kaggle.com/c/otto-group-product-classification-challenge/data). The description of the dataset is as follows:
+You'll use a dataset created by the Otto group, which was also used in a [Kaggle competition](https://www.kaggle.com/c/otto-group-product-classification-challenge/data). The description of the dataset is as follows:
 
-The Otto Group is one of the world’s biggest e-commerce companies, with subsidiaries in more than 20 countries, including Crate & Barrel (USA), Otto.de (Germany) and 3 Suisses (France). They are selling millions of products worldwide every day, with several thousand products being added to our product line.
+The Otto Group is one of the world’s biggest e-commerce companies, with subsidiaries in more than 20 countries, including Crate & Barrel (USA), Otto.de (Germany) and 3 Suisses (France). They are selling millions of products worldwide every day, with several thousand products being added to their product line.
 
-A consistent analysis of the performance of our products is crucial. However, due to their global infrastructure, many identical products get classified differently. Therefore, the quality of our product analysis depends heavily on the ability to accurately cluster similar products. The better the classification, the more insights Otto Group can generate about their product range.
+A consistent analysis of the performance of their products is crucial. However, due to their global infrastructure, many identical products get classified differently. Therefore, the quality of product analysis depends heavily on the ability to accurately cluster similar products. The better the classification, the more insights the Otto Group can generate about their product range.
 
 In this lab, you'll use a dataset containing:
 - A column `id`, which is an anonymous id unique to a product
@@ -126,9 +125,9 @@ This is a relatively big training set, so you can assign 40% to the test set. Se
 Create your baseline model *in a pipeline setting*. In the pipeline: 
 
 - Your first step will be to scale your features down to the number of features that ensure you keep just 80% of your explained variance (which we saw before)
-- Your second step will be the building a basic logistic regression model 
+- Your second step will be to build a basic logistic regression model 
 
-Make sure to fit the model using the training set, and test the result by obtaining the accuracy using the test set. Set the `random_state` to 123. 
+Make sure to fit the model using the training set and test the result by obtaining the accuracy using the test set. Set the `random_state` to 123. 
 
 
 ```python
@@ -148,7 +147,7 @@ Make sure to fit the model using the training set, and test the result by obtain
 ## Create a pipeline consisting of a linear SVM, a simple decision tree, and a simple random forest classifier
 
 Repeat the above, but now create three different pipelines:
-- One for a standard linear SCM
+- One for a standard linear SVM
 - One for a default decision tree
 - One for a random forest classifier
 
@@ -162,7 +161,7 @@ Repeat the above, but now create three different pipelines:
 
 Construct two pipelines with grid search:
 - one for random forests - try to have around 40 different models
-- one for the adaboost algorithm 
+- one for the AdaBoost algorithm 
 
 ### Random Forest pipeline with grid search
 
@@ -186,7 +185,7 @@ Use your grid search object along with `.cv_results` to get the full result over
 # Your code here 
 ```
 
-### Adaboost
+### AdaBoost
 
 
 ```python
@@ -203,7 +202,7 @@ Use your grid search object along with `.cv_results` to get the full result over
 
 ### Level-up (Optional): SVM pipeline with grid search 
 
-As extra, level-up work, construct a pipeline with grid search for support vector machines. 
+As extra level-up work, construct a pipeline with grid search for support vector machines. 
 * Make sure your grid isn't too big. You'll see it takes quite a while to fit SVMs with non-linear kernel functions!
 
 
@@ -221,8 +220,8 @@ Use your grid search object along with `.cv_results` to get the full result over
 
 ## Note
 
-Note that this solution is only one of many options. The results in the Random Forest and Adaboost models show that there is a lot of improvement possible tuning the hyperparameters further, so make sure to explore this yourself!
+Note that this solution is only one of many options. The results in the Random Forest and AdaBoost models show that there is a lot of improvement possible by tuning the hyperparameters further, so make sure to explore this yourself!
 
 ## Summary 
 
-Great! You now got a lot of practice in. What algorithm would you choose and why?
+Great! You've gotten a lot of practice in using PCA in pipelines. What algorithm would you choose and why?
